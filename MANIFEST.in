@@ -1,0 +1,5 @@
+include LICENSE
+include README
+recursive-include nss_admin/static *
+recursive-include nss_admin/templates *
+recursive-include nss_admin/locale *

@@ -1,0 +1,20 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans 'password change form' %}{% endblock %}
+
+{% block content %}
+  <h2>{% trans 'password change form' %}</h2>
+  
+  <form action="" method="post">
+	{% csrf_token %}
+
+	{{ form.errors }}
+	<table>
+	{{ form.as_table }}
+	</table>
+	<p class="submit">
+		<input type="submit" value="{% trans "Submit" %}" />
+	</p>
+  </form>
+{% endblock %}
