@@ -8,8 +8,6 @@
   
   <form action="" method="post">
 	{% csrf_token %}
-
-	{{ form.errors }}
 	<table>
 	{{ form.as_table }}
 	</table>

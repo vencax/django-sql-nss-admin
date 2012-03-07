@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models.signals import pre_save
-import md5
 
 from signals import sysUserSaved, sysGroupSaved
 from nss_admin.utils import createPasswdHash
@@ -25,7 +24,7 @@ class SysUser(models.Model):
     Represent a system user.
     """
     user_id = models.AutoField(primary_key=True)
-    user_name = models.CharField(verbose_name=_('User Name'), max_length=50, unique=True)
+    user_name = models.CharField(verbose_name=_('Username'), max_length=50, unique=True)
     realname = models.CharField(verbose_name=_('realname'), max_length=32)    
     shell = models.CharField(verbose_name=_('Login Shell'), max_length=20, 
                              choices=SHELL_CHOICES, default=DEFAULT_SHELL)    

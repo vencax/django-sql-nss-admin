@@ -17,5 +17,5 @@ def moveHomeDir(uname):
   
 def createPasswdHash(passwd):
     if HASH_METHOD == 'MD5':
-        import md5
-        return md5.new(passwd).hexdigest()
+        from hashlib import md5
+        return md5(passwd).hexdigest()

@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from .utils import createPasswdHash
 
 class ChangePwdForm(PasswordChangeForm):
-    usename = forms.CharField(label=_("Username"))
+    username = forms.CharField(label=_("Username"), )
     
     def __init__(self, *args, **kwargs):
         super(ChangePwdForm, self).__init__(None, *args, **kwargs)
@@ -22,18 +22,25 @@ class ChangePwdForm(PasswordChangeForm):
             u.save()
         return u
       
-    def clean_old_password(self):
-        return self.cleaned_data["old_password"]
-    
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        
-        u = SysUser.objects.get(user_name=cleaned_data['usename'])
-        if u.password != createPasswdHash(cleaned_data['old_password']):
-            raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
+    def clean_username(self):
+        try:
+            SysUser.objects.get(user_name=self.cleaned_data['username'])
+        except SysUser.DoesNotExist:
+            raise forms.ValidationError(_("No user with given username"))
+        return self.cleaned_data['username']
           
-        cleaned_data['u'] = u
-        return cleaned_data
+    def clean_old_password(self):
+        try:
+            u = SysUser.objects.get(user_name=self.cleaned_data['username'])
+            if u.password != createPasswdHash(self.cleaned_data['old_password']):
+                raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
+        except KeyError:
+            pass        
+        
+        self.cleaned_data['u'] = u
+        return self.cleaned_data['old_password']
+      
+ChangePwdForm.base_fields.keyOrder = ['username', 'old_password', 'new_password1', 'new_password2']
 
 def change_passwd(request):
     """

@@ -1,0 +1,127 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-03-07 23:49+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
+#: models.py:19
+msgid "No problem?"
+msgstr "Bez problému?"
+
+#: models.py:27 views.py:13
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+#: models.py:28
+msgid "realname"
+msgstr "Jméno"
+
+#: models.py:29
+msgid "Login Shell"
+msgstr "Příkazový řádek"
+
+#: models.py:31
+msgid "Password"
+msgstr "Heslo"
+
+#: models.py:33 models.py:79
+msgid "status"
+msgstr "Status"
+
+#: models.py:37
+msgid "Home Directory"
+msgstr "Domovský adresář"
+
+#: models.py:38
+msgid "lastchange"
+msgstr "Poslení změna"
+
+#: models.py:39
+msgid "minchange"
+msgstr "Min"
+
+#: models.py:40
+msgid "Minimum password validity"
+msgstr "Minimální platnost heslo"
+
+#: models.py:41
+msgid "maxchange"
+msgstr "Max"
+
+#: models.py:42
+msgid "Maximum password validity"
+msgstr "Maximální platnost hesla"
+
+#: models.py:43
+msgid "warn days"
+msgstr "Počet varovných dní"
+
+#: models.py:44
+msgid "Warning period"
+msgstr "Délka periody varování před vypršením hesla"
+
+#: models.py:45
+msgid "inact days"
+msgstr ""
+
+#: models.py:46
+msgid "Inactivity period"
+msgstr ""
+
+#: models.py:47
+msgid "expire days"
+msgstr ""
+
+#: models.py:55 models.py:64
+msgid "system user"
+msgstr "Systémový uživatel"
+
+#: models.py:56
+msgid "system users"
+msgstr "Systémoví uživatelé"
+
+#: models.py:70
+msgid "Active"
+msgstr "Aktivní"
+
+#: models.py:87 models.py:90
+msgid "system group"
+msgstr "Systémová skupina"
+
+#: models.py:88
+msgid "system groups"
+msgstr "Systémové skupiny"
+
+#: views.py:29
+msgid "No user with given username"
+msgstr "Uživatel nenalezen, spatně vyplněné uživatelské jméno"
+
+#: templates/nss_admin/passChanged.html:4
+#: templates/nss_admin/passChanged.html:7
+msgid "password changed"
+msgstr "Heslo změněno"
+
+#: templates/nss_admin/passChanged.html:8
+msgid "congratulations"
+msgstr "Gratulujeme"
+
+#: templates/nss_admin/passForm.html:4 templates/nss_admin/passForm.html:7
+msgid "password change form"
+msgstr "Formulář pro změnu hesla"
+
+#: templates/nss_admin/passForm.html:15
+msgid "Submit"
+msgstr "Odeslat"
