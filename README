@@ -1,7 +1,10 @@
 Introduction
 ==============
 
-
+NIX world offers so many options to store centrally managed user accounts.
+One of them is SQL DB and associated mechanism libnss-mysql libpam-mysql. 
+Lack of reasonable web based admins pushed me into searching if somebody has made django based admin of these entites.
+There was some tries but none of them finished. Thats why this repository. 
 
 Installation
 ==============
