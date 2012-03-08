@@ -54,6 +54,7 @@ class SysUser(models.Model):
         db_table = 'user'
         verbose_name = _('system user')
         verbose_name_plural = _('system users')
+        app_label = 'SystemSQLAccounts'
         
     def save(self, *args, **kwargs):
         if PGINA_HACKS:
@@ -86,6 +87,7 @@ class SysGroup(models.Model):
         db_table = 'groups'
         verbose_name = _('system group')
         verbose_name_plural = _('system groups')
+        app_label = 'SystemSQLAccounts'
         
     def __unicode__(self): return u'%s %s' % (_('system group'), self.group_name)
         
@@ -98,5 +100,5 @@ class SysMembership(models.Model):
     
     class Meta:
         db_table = 'user_group'
-        
+        app_label = 'SystemSQLAccounts'
 # -----------------------------------------------------------------------------

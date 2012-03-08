@@ -5,6 +5,7 @@ NIX world offers so many options to store centrally managed user accounts.
 One of them is SQL DB and associated mechanism libnss-mysql libpam-mysql. 
 Lack of reasonable web based admins pushed me into searching if somebody has made django based admin of these entites.
 There was some tries but none of them finished. Thats why this repository. 
+For details see: http://cvs.savannah.gnu.org/viewvc/nss-mysql/sample.sql?root=nss-mysql&view=markup
 
 Installation
 ==============
@@ -22,14 +23,27 @@ Installation
 4. Include nss_admin.urls into your root url conf
 
      url(r'^nss_admin/', include('nss_admin.urls')),
+     
+5. Add sys_users database connection and router:
+	
+	DATABASES['sys_users'] = {
+	  'ENGINE': 'django.db.backends.mysql',
+	  'NAME': 'yourDBName',
+	  'USER': 'yourDBUser',
+	  'PASSWORD': yoursecretpwd,
+	  'HOST': 'yourDBHost',
+	  'PORT': '3306'
+	}
+
+	DATABASE_ROUTERS = ['nss_admin.routers.SysAccountsRouter']
 		
-5. Optionaly add following configs into settings
+6. Optionaly add following configs into settings
 
 	DEFAULT_SHELL = '/bin/bash' - default shell associated with a user 
 	PGINA_HACKS = True	- if you plan use PGina for auth on Win machines (hack - see code ..)
 	UID_RANGE_BEGIN = 5000 - begin of interval users ID taken from (prevent mangling with system account IDs) 
 	GID_RANGE_BEGIN = 5000 - begin of interval groups ID taken from (prevent mangling with system groups IDs)
 				
-6. You are done
+7. You are done
 
 
