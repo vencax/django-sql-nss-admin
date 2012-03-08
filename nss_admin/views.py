@@ -18,7 +18,7 @@ class ChangePwdForm(PasswordChangeForm):
     def save(self, commit=True):
         if commit:
             u = self.cleaned_data['u']
-            u.password = createPasswdHash(self.cleaned_data['new_password1'])
+            u.password = self.cleaned_data['new_password1']
             u.save()
         return u
       
@@ -34,10 +34,10 @@ class ChangePwdForm(PasswordChangeForm):
             u = SysUser.objects.get(user_name=self.cleaned_data['username'])
             if u.password != createPasswdHash(self.cleaned_data['old_password']):
                 raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
+            self.cleaned_data['u'] = u
         except KeyError:
-            pass        
+            pass
         
-        self.cleaned_data['u'] = u
         return self.cleaned_data['old_password']
       
 ChangePwdForm.base_fields.keyOrder = ['username', 'old_password', 'new_password1', 'new_password2']

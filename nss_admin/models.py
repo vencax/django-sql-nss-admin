@@ -49,16 +49,17 @@ class SysUser(models.Model):
     if PGINA_HACKS:
         # this is because PGina has username column name hardcoded
         user = models.CharField(max_length=50, unique=True)
+        hash_method = models.CharField(max_length=8)
     
     class Meta:
         db_table = 'user'
         verbose_name = _('system user')
         verbose_name_plural = _('system users')
-        app_label = 'SystemSQLAccounts'
         
     def save(self, *args, **kwargs):
         if PGINA_HACKS:
-            self.user = self.user_names
+            self.user = self.user_name
+            self.hash_method = 'MD5'
         self.password = createPasswdHash(self.password)
         super(SysUser, self).save(*args, **kwargs)
         
@@ -87,7 +88,6 @@ class SysGroup(models.Model):
         db_table = 'groups'
         verbose_name = _('system group')
         verbose_name_plural = _('system groups')
-        app_label = 'SystemSQLAccounts'
         
     def __unicode__(self): return u'%s %s' % (_('system group'), self.group_name)
         
@@ -95,10 +95,9 @@ pre_save.connect(sysGroupSaved, sender=SysGroup, dispatch_uid='SysGroup_pre_save
 # -----------------------------------------------------------------------------
 
 class SysMembership(models.Model):
-    user_id = models.ForeignKey(SysUser)
-    group_id = models.ForeignKey(SysGroup)
+    user = models.ForeignKey(SysUser)
+    group = models.ForeignKey(SysGroup)
     
     class Meta:
         db_table = 'user_group'
-        app_label = 'SystemSQLAccounts'
 # -----------------------------------------------------------------------------

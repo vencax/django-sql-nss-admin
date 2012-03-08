@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import SysGroup, SysUser, SysMembership
+from models import SysGroup, SysUser, SysMembership, PGINA_HACKS
 
 class MembershipInline(admin.TabularInline):
     model = SysMembership
@@ -18,6 +18,8 @@ class SysUserAdmin(admin.ModelAdmin):
     list_display = ('user_name', 'realname', 'uid', 'homedir', 'shell')
     search_fields = ['user_name']
     exclude = ('uid', 'homedir', 'lastchange', 'inact')
+    if PGINA_HACKS:
+        exclude += ('user', 'hash_method')
 
 admin.site.register(SysGroup, SysGroupAdmin)
 admin.site.register(SysUser, SysUserAdmin)
