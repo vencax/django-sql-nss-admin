@@ -10,7 +10,7 @@ For details see: http://cvs.savannah.gnu.org/viewvc/nss-mysql/sample.sql?root=ns
 User manipulation has some triggers to optionally perform some other activities.
 I.e. samba user adding along sys user adding, home creating/removing.
 For this is necessary to issue some commands on machine where these services are running.
-Few approaches are implemented here (see sommand_runner.py). Comments are welcomed.
+Extra project has been extraced for this purpose: https://github.com/vencax/django-command-runner
 
 Installation
 ==============

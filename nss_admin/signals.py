@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.db.models.aggregates import Max
+from command_runner import runCommand
 
-from .utils import runCommand, createPasswdHash
+from .utils import createPasswdHash
+
 
 UID_RANGE_BEGIN = getattr(settings, 'UID_RANGE_BEGIN', 5000)
 GID_RANGE_BEGIN = getattr(settings, 'GID_RANGE_BEGIN', 5000)

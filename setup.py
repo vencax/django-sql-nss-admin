@@ -21,6 +21,7 @@ setup(name='django-sql-nss-admin',
     packages=find_packages(),
     install_requires=[
         'django>=1.3',
+        'git://github.com/vencax/django-command-runner.git'
     ],
     keywords="django linux libnss-mysql nss admin",
     include_package_data=True,
