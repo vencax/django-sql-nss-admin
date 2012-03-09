@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-07 23:49+0100\n"
+"POT-Creation-Date: 2012-03-08 17:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,91 +17,91 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: models.py:19
-msgid "No problem?"
-msgstr "Bez problému?"
-
-#: models.py:27 views.py:13
-msgid "Username"
-msgstr "Uživatelské jméno"
-
-#: models.py:28
-msgid "realname"
-msgstr "Jméno"
-
-#: models.py:29
-msgid "Login Shell"
-msgstr "Příkazový řádek"
-
-#: models.py:31
-msgid "Password"
-msgstr "Heslo"
-
-#: models.py:33 models.py:79
-msgid "status"
-msgstr "Status"
-
-#: models.py:37
-msgid "Home Directory"
-msgstr "Domovský adresář"
-
-#: models.py:38
-msgid "lastchange"
-msgstr "Poslení změna"
-
-#: models.py:39
-msgid "minchange"
-msgstr "Min"
-
-#: models.py:40
-msgid "Minimum password validity"
-msgstr "Minimální platnost heslo"
-
-#: models.py:41
-msgid "maxchange"
-msgstr "Max"
-
-#: models.py:42
-msgid "Maximum password validity"
-msgstr "Maximální platnost hesla"
-
-#: models.py:43
-msgid "warn days"
-msgstr "Počet varovných dní"
-
-#: models.py:44
-msgid "Warning period"
-msgstr "Délka periody varování před vypršením hesla"
-
-#: models.py:45
-msgid "inact days"
-msgstr ""
-
-#: models.py:46
-msgid "Inactivity period"
-msgstr ""
-
-#: models.py:47
-msgid "expire days"
-msgstr ""
-
-#: models.py:55 models.py:64
-msgid "system user"
-msgstr "Systémový uživatel"
-
-#: models.py:56
-msgid "system users"
-msgstr "Systémoví uživatelé"
-
-#: models.py:70
+#: models.py:19 models.py:73
 msgid "Active"
 msgstr "Aktivní"
 
-#: models.py:87 models.py:90
+#: models.py:20
+msgid "Disabled"
+msgstr "Zakázán"
+
+#: models.py:28 views.py:13
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+#: models.py:29
+msgid "realname"
+msgstr "Jméno"
+
+#: models.py:30
+msgid "Login Shell"
+msgstr "Příkazový řádek"
+
+#: models.py:32
+msgid "Password"
+msgstr "Heslo"
+
+#: models.py:34 models.py:82
+msgid "status"
+msgstr "Status"
+
+#: models.py:38
+msgid "Home Directory"
+msgstr "Domovský adresář"
+
+#: models.py:39
+msgid "lastchange"
+msgstr "Poslení změna"
+
+#: models.py:40
+msgid "minchange"
+msgstr "Min"
+
+#: models.py:41
+msgid "Minimum password validity"
+msgstr "Minimální platnost heslo"
+
+#: models.py:42
+msgid "maxchange"
+msgstr "Max"
+
+#: models.py:43
+msgid "Maximum password validity"
+msgstr "Maximální platnost hesla"
+
+#: models.py:44
+msgid "warn days"
+msgstr "Počet varovných dní"
+
+#: models.py:45
+msgid "Warning period"
+msgstr "Délka periody varování před vypršením hesla"
+
+#: models.py:46
+msgid "inact days"
+msgstr ""
+
+#: models.py:47
+msgid "Inactivity period"
+msgstr ""
+
+#: models.py:48
+msgid "expire days"
+msgstr ""
+
+#: models.py:57 models.py:67
+msgid "system user"
+msgstr "Systémový uživatel"
+
+#: models.py:58
+msgid "system users"
+msgstr "Systémoví uživatelé"
+
+#: models.py:90 models.py:93
 msgid "system group"
 msgstr "Systémová skupina"
 
-#: models.py:88
+#: models.py:91
 msgid "system groups"
 msgstr "Systémové skupiny"
 

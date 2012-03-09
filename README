@@ -7,6 +7,11 @@ Lack of reasonable web based admins pushed me into searching if somebody has mad
 There was some tries but none of them finished. Thats why this repository. 
 For details see: http://cvs.savannah.gnu.org/viewvc/nss-mysql/sample.sql?root=nss-mysql&view=markup
 
+User manipulation has some triggers to optionally perform some other activities.
+I.e. samba user adding along sys user adding, home creating/removing.
+For this is necessary to issue some commands on machine where these services are running.
+Few approaches are implemented here (see sommand_runner.py). Comments are welcomed.
+
 Installation
 ==============
 
@@ -43,6 +48,8 @@ Installation
 	PGINA_HACKS = True	- if you plan use PGina for auth on Win machines (hack - see code ..)
 	UID_RANGE_BEGIN = 5000 - begin of interval users ID taken from (prevent mangling with system account IDs) 
 	GID_RANGE_BEGIN = 5000 - begin of interval groups ID taken from (prevent mangling with system groups IDs)
+	
+	plus few others (for details see. the code)
 				
 7. You are done
 

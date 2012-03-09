@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, pre_delete, post_save
 
-from signals import sysUserSaved, sysGroupSaved
-from nss_admin.utils import createPasswdHash
+from signals import sysUserSaved, sysGroupSaved, sysUserDeleted
+from nss_admin.signals import sysUserPostSaved
 
 
 DEFAULT_SHELL = getattr(settings, 'DEFAULT_SHELL', '/bin/sh')
@@ -16,7 +16,8 @@ SHELL_CHOICES = (
     ('/bin/false', 'No Shell')
 )
 USER_STATUS_CHOICES = (
-    ('N', _('No problem?')),
+    ('A', _('Active')),
+    ('N', _('Disabled'))
 )
 
 class SysUser(models.Model):
@@ -31,7 +32,7 @@ class SysUser(models.Model):
     password = models.CharField(verbose_name=_('Password'), max_length=40, 
                                 help_text='Password for shell logins')    
     status = models.CharField(verbose_name=_('status'), max_length=1, 
-                              choices=USER_STATUS_CHOICES, default='N')
+                              choices=USER_STATUS_CHOICES, default='A')
     uid = models.PositiveIntegerField('User ID')
     gid = models.PositiveIntegerField('User GID', default=1000)
     homedir = models.CharField(verbose_name=_('Home Directory'), max_length=32)
@@ -60,12 +61,13 @@ class SysUser(models.Model):
         if PGINA_HACKS:
             self.user = self.user_name
             self.hash_method = 'MD5'
-        self.password = createPasswdHash(self.password)
         super(SysUser, self).save(*args, **kwargs)
         
     def __unicode__(self): return u'%s %s' % (_('system user'), self.user_name)
         
 pre_save.connect(sysUserSaved, sender=SysUser, dispatch_uid='sysUser_pre_save')
+post_save.connect(sysUserPostSaved, sender=SysUser, dispatch_uid='sysUser_post_save')
+pre_delete.connect(sysUserDeleted, sender=SysUser, dispatch_uid='sysUser_pre_delete')
 # -----------------------------------------------------------------------------
 
 GROUP_STATUS_CHOICES = (
