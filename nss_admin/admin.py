@@ -15,8 +15,8 @@ class SysUserAdmin(admin.ModelAdmin):
     inlines = [
         MembershipInline,
     ]
-    list_display = ('user_name', 'realname', 'uid', 'homedir', 'shell')
-    search_fields = ['user_name']
+    list_display = ('user_name', 'realname', 'uid', 'shell')
+    search_fields = ['user_name', 'realname']
     exclude = ('uid', 'homedir', 'lastchange', 'inact')
     if PGINA_HACKS:
         exclude += ('user', 'hash_method')

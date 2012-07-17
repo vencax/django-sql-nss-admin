@@ -35,14 +35,6 @@ class SysUser(models.Model):
                               choices=USER_STATUS_CHOICES, default='A')
     uid = models.PositiveIntegerField('User ID')
     gid = models.PositiveIntegerField('User GID', default=1000)
-    homedir = models.CharField(verbose_name=_('Home Directory'), max_length=32)
-    lastchange = models.PositiveIntegerField(verbose_name=_('lastchange'), default=1)
-    min = models.PositiveIntegerField(verbose_name=_('minchange'), default=0,
-                                      help_text=_('Minimum password validity'))
-    max = models.PositiveIntegerField(verbose_name=_('maxchange'), default=99999,
-                                      help_text=_('Maximum password validity'))
-    warn = models.PositiveIntegerField(verbose_name=_('warn days'), 
-                                       help_text=_('Warning period'), default=0)
     inact = models.PositiveIntegerField(verbose_name=_('inact days'),
                                              help_text=_('Inactivity period'), default=0)
     expire = models.IntegerField(default=-1, verbose_name=_('expire days'))
