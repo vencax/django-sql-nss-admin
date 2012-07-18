@@ -7,17 +7,17 @@ class MembershipInline(admin.TabularInline):
     extra = 1
     
 class SysGroupAdmin(admin.ModelAdmin):
-    list_display = ('group_name', 'gid')
+    list_display = ('group_name',)
     search_fields = ['group_name']
-    exclude = ('members', 'gid')
+    exclude = ('members', 'status')
     
 class SysUserAdmin(admin.ModelAdmin):
     inlines = [
         MembershipInline,
     ]
-    list_display = ('user_name', 'realname', 'uid', 'shell')
+    list_display = ('user_name', 'realname', 'shell')
     search_fields = ['user_name', 'realname']
-    exclude = ('uid', 'homedir', 'lastchange', 'inact')
+    exclude = ('status', )
     if PGINA_HACKS:
         exclude += ('user', 'hash_method')
 
