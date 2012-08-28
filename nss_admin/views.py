@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from .utils import createPasswdHash
+from .utils import createPasswdHash, checkPasswd
 
 class ChangePwdForm(PasswordChangeForm):
     username = forms.CharField(label=_("Username"), )
@@ -21,7 +21,14 @@ class ChangePwdForm(PasswordChangeForm):
             u.password = self.cleaned_data['new_password1']
             u.save()
         return u
-      
+    
+    def clean_password(self):
+        try:
+            createPasswdHash(self.cleaned_data['new_password1'])
+            return self.cleaned_data['new_password1']
+        except UnicodeEncodeError:
+            raise forms.ValidationError(_("No diacritics in password allowed"))
+        
     def clean_username(self):
         try:
             SysUser.objects.get(user_name=self.cleaned_data['username'])
@@ -32,7 +39,7 @@ class ChangePwdForm(PasswordChangeForm):
     def clean_old_password(self):
         try:
             u = SysUser.objects.get(user_name=self.cleaned_data['username'])
-            if u.password != createPasswdHash(self.cleaned_data['old_password']):
+            if not checkPasswd(self.cleaned_data['old_password'], u.password):
                 raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
             self.cleaned_data['u'] = u
         except KeyError:

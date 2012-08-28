@@ -28,7 +28,7 @@ class SysUser(models.Model):
     shell = models.CharField(verbose_name=_('Login Shell'), max_length=20, 
                              choices=SHELL_CHOICES, default=DEFAULT_SHELL)    
     password = models.CharField(verbose_name=_('Password'), max_length=40, 
-                                help_text='Password for shell logins')    
+                                help_text='Password for shell logins')
     status = models.CharField(verbose_name=_('status'), max_length=1, 
                               choices=USER_STATUS_CHOICES, default='A')
     gid = models.ForeignKey('SysGroup', verbose_name=_('primary group'), default=True)
@@ -38,19 +38,15 @@ class SysUser(models.Model):
         # this is because PGina has username column name hardcoded
         user = models.CharField(max_length=50, unique=True)
         hash_method = models.CharField(max_length=8)
+        unixpwd = models.CharField(max_length=128, editable=False)
     
     class Meta:
         db_table = 'user'
         verbose_name = _('system user')
         verbose_name_plural = _('system users')
         
-    def save(self, *args, **kwargs):
-        if PGINA_HACKS:
-            self.user = self.user_name
-            self.hash_method = 'MD5'
-        super(SysUser, self).save(*args, **kwargs)
-        
-    def __unicode__(self): return u'%s %s' % (_('system user'), self.user_name)
+    def __unicode__(self): 
+        return u'%s %s' % (_('system user'), self.user_name)
         
 pre_save.connect(sysUserSaved, sender=SysUser, dispatch_uid='sysUser_pre_save')
 post_save.connect(sysUserPostSaved, sender=SysUser, dispatch_uid='sysUser_post_save')
