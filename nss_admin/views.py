@@ -2,11 +2,11 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.forms import PasswordChangeForm
 from django import forms
-from nss_admin.models import SysUser
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
+from .models import SysUser, PGINA_HACKS
 from .utils import createPasswdHash, checkPasswd
 
 class ChangePwdForm(PasswordChangeForm):
@@ -39,7 +39,11 @@ class ChangePwdForm(PasswordChangeForm):
     def clean_old_password(self):
         try:
             u = SysUser.objects.get(user_name=self.cleaned_data['username'])
-            if not checkPasswd(self.cleaned_data['old_password'], u.password):
+            if PGINA_HACKS:
+                pwdForCheck = u.unixpwd
+            else:
+                pwdForCheck = u.password
+            if not checkPasswd(self.cleaned_data['old_password'], pwdForCheck):
                 raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
             self.cleaned_data['u'] = u
         except KeyError:
