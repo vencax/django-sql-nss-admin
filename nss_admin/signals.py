@@ -24,7 +24,12 @@ def sysUserSaved(sender, instance, **kwargs):
 def sysUserPostSaved(sender, instance, created, **kwargs):
     if created:
         homedir = '%s/%s' % (HOMES_PATH, instance.user_name)
-        runCommand('cp -R /etc/skel %s && chown -R %s:adm %s && chmod 770 %s' %\
+        exists = runCommand('test -d %s' % homedir)
+        if exists == 0:
+            runCommand('chown -R %s:adm %s && chmod 770 %s' %\
+                (instance.user_name, homedir, homedir))
+        else: 
+            runCommand('cp -R /etc/skel %s && chown -R %s:adm %s && chmod 770 %s' %\
                    (homedir, instance.user_name, homedir, homedir))
         if ISSUE_SAMBA_COMMANDS:
             runCommand('(echo %s; echo %s) | smbpasswd -s -a %s' %\
