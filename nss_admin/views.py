@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from .models import SysUser, PGINA_HACKS
-from .utils import createPasswdHash, checkPasswd
+from .utils import checkPasswd, checkPasswdValidity
 
 class ChangePwdForm(PasswordChangeForm):
     username = forms.CharField(label=_("Username"), )
@@ -22,12 +22,10 @@ class ChangePwdForm(PasswordChangeForm):
             u.save()
         return u
     
-    def clean_password(self):
-        try:
-            createPasswdHash(self.cleaned_data['new_password1'])
-            return self.cleaned_data['new_password1']
-        except UnicodeEncodeError:
-            raise forms.ValidationError(_("No diacritics in password allowed"))
+    def clean_new_password1(self):
+        if not checkPasswdValidity(self.cleaned_data['new_password1']):
+            raise forms.ValidationError(_("No diacritics in password allowed"))            
+        return self.cleaned_data['new_password1']
         
     def clean_username(self):
         try:

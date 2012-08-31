@@ -7,7 +7,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 from .models import SysUser
-from .utils import createPasswdHash
+from .utils import checkPasswdValidity
 
 class SysUserAdminForm(forms.ModelForm):
     
@@ -23,10 +23,9 @@ class SysUserAdminForm(forms.ModelForm):
     def clean_password(self):
         pwd = self.cleaned_data['password']
         if pwd:
-            try:
-                createPasswdHash(pwd)
+            if checkPasswdValidity(pwd):
                 return pwd
-            except UnicodeEncodeError:
+            else:
                 raise forms.ValidationError(_('No diacritics in password allowed')) 
         else:
             self.DO_NOT_UPDATE_PWD = True

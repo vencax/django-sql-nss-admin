@@ -4,6 +4,7 @@ Created on Mar 7, 2012
 @author: vencax
 '''
 from django.conf import settings
+import string
 
 HASH_METHOD = getattr(settings, 'HASH_METHOD', 'MD5')
   
@@ -12,7 +13,7 @@ def createPasswdHash(passwd):
         from hashlib import md5
         return md5(passwd).hexdigest()
     if HASH_METHOD == 'CRYPT':
-        import crypt, string, random
+        import crypt, random
         def getsalt(chars = string.letters + string.digits):
             # generate a random 2-character 'salt'
             return random.choice(chars) + random.choice(chars)
@@ -25,3 +26,9 @@ def checkPasswd(rawpasswd, pwhash):
     if HASH_METHOD == 'CRYPT':
         import crypt
         return crypt.crypt(rawpasswd, pwhash) == pwhash
+    
+def checkPasswdValidity(pwd):
+    for l in pwd:
+        if l not in string.printable:
+            return False
+    return True
