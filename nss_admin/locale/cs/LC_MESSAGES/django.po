@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-18 10:49+0200\n"
+"POT-Creation-Date: 2012-08-31 21:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: models.py:17 models.py:61
+#: forms.py:14 models.py:30
+msgid "Password"
+msgstr "Heslo"
+
+#: forms.py:15
+msgid "Input new password if desired"
+msgstr "Vložte nové heslo nebo nechte prázdé pro ponechání stávajícího."
+
+#: forms.py:30 views.py:30
+msgid "No diacritics in password allowed"
+msgstr "Diakritika v hesle je zakázána"
+
+#: models.py:17 models.py:57
 msgid "Active"
 msgstr "Aktivní"
 
@@ -37,11 +49,11 @@ msgstr "Jméno"
 msgid "Login Shell"
 msgstr "Příkazový řádek"
 
-#: models.py:30
-msgid "Password"
-msgstr "Heslo"
+#: models.py:31
+msgid "Password for shell logins"
+msgstr "Heslo pro přihlašování k počítačům."
 
-#: models.py:32 models.py:70
+#: models.py:32 models.py:66
 msgid "status"
 msgstr "Status"
 
@@ -49,33 +61,37 @@ msgstr "Status"
 msgid "primary group"
 msgstr "primární skupina"
 
-#: models.py:44 models.py:53
+#: models.py:45 models.py:49
 msgid "system user"
 msgstr "Systémový uživatel"
 
-#: models.py:45
+#: models.py:46
 msgid "system users"
 msgstr "Systémoví uživatelé"
 
-#: models.py:76 models.py:80
+#: models.py:72 models.py:76
 msgid "system group"
 msgstr "Systémová skupina"
 
-#: models.py:77
+#: models.py:73
 msgid "system groups"
 msgstr "Systémové skupiny"
 
-#: models.py:89
+#: models.py:85
 msgid "system group membership"
 msgstr "členství ve skupině"
 
-#: models.py:90
+#: models.py:86
 msgid "system group memberships"
 msgstr "členství ve skupině"
 
-#: views.py:29
+#: views.py:36
 msgid "No user with given username"
 msgstr "Uživatel nenalezen, spatně vyplněné uživatelské jméno"
+
+#: views.py:47
+msgid "Your old password was entered incorrectly. Please enter it again."
+msgstr "Vaše staré heslo bylo zadáno špatně. Prosím zadejte správné."
 
 #: templates/nss_admin/passChanged.html:4
 #: templates/nss_admin/passChanged.html:7

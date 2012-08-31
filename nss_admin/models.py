@@ -28,7 +28,7 @@ class SysUser(models.Model):
     shell = models.CharField(verbose_name=_('Login Shell'), max_length=20, 
                              choices=SHELL_CHOICES, default=DEFAULT_SHELL)    
     password = models.CharField(verbose_name=_('Password'), max_length=40, 
-                                help_text='Password for shell logins')
+                                help_text=_('Password for shell logins'))
     status = models.CharField(verbose_name=_('status'), max_length=1, 
                               choices=USER_STATUS_CHOICES, default='A')
     gid = models.ForeignKey('SysGroup', verbose_name=_('primary group'), default=True)

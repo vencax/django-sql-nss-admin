@@ -11,14 +11,15 @@ PGINA_HACKS = getattr(settings, 'PGINA_HACKS', False)
 def sysUserSaved(sender, instance, **kwargs):
     """ Automatically handle home directory """
     instance._raw_pwd = instance.password
-    if PGINA_HACKS:
-        instance.user = instance.user_name
-        instance.hash_method = 'MD5'
-        instance.unixpwd = createPasswdHash(instance.password)
-        from hashlib import md5
-        instance.password = md5(instance.password).hexdigest()
-    else:
-        instance.password = createPasswdHash(instance.password)
+    if not hasattr(instance, 'DO_NOT_UPDATE_PWD'):
+        if PGINA_HACKS:
+            instance.user = instance.user_name
+            instance.hash_method = 'MD5'
+            instance.unixpwd = createPasswdHash(instance.password)
+            from hashlib import md5
+            instance.password = md5(instance.password).hexdigest()
+        else:
+            instance.password = createPasswdHash(instance.password)
     return instance
             
 def sysUserPostSaved(sender, instance, created, **kwargs):
@@ -35,7 +36,7 @@ def sysUserPostSaved(sender, instance, created, **kwargs):
             runCommand('(echo %s; echo %s) | smbpasswd -s -a %s' %\
                 (instance._raw_pwd, instance._raw_pwd, instance.user_name))
     else:
-        if ISSUE_SAMBA_COMMANDS:
+        if ISSUE_SAMBA_COMMANDS and not hasattr(instance, 'DO_NOT_UPDATE_PWD'):
             runCommand('(echo %s; echo %s) | smbpasswd -s %s' %\
                 (instance._raw_pwd, instance._raw_pwd, instance.user_name))
         
