@@ -6,13 +6,13 @@ from nss_admin.models import SysUser, SysGroup, SysMembership
 class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
-        make_option('--input', action='store_true', dest='all', default='~/import.ldif', 
+        make_option('--input', action='store_true', dest='all', default='~/import.ldif',
                     help=u'Input LDIF file'),
-        make_option('--skip', action='store_true', dest='by-time', default=[], 
+        make_option('--skip', action='store_true', dest='by-time', default=[],
                     help=u'DNs to skip'),
     )
     help = u'Import from LDIF'
-    
+
     defaultGroup = 'zaci'
     extraGroups = {
         'ucitele' : ['blazkova', 'capakova', 'capakova', 'cervinkova', 'cidlikova',
@@ -28,19 +28,19 @@ class Command(BaseCommand):
         notAssignedUsers = SysUser.objects.filter(sysmembership=None)
         for u in notAssignedUsers:
             self._assign(u)
-        
+
     def _assign(self, user):
         for g, members in self.extraGroups.items():
             if user.user_name in members:
                 self._add(g, user)
-                return        
+                return
         self._add(self.defaultGroup, user)
-        
+
     def _add(self, group, user):
         gobj = SysGroup.objects.get(group_name=group)
         sm = SysMembership(user=user, group=gobj)
         sm.save()
-        
+
 
 
 

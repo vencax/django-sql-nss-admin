@@ -11,29 +11,29 @@ from .utils import checkPasswd, checkPasswdValidity
 
 class ChangePwdForm(PasswordChangeForm):
     username = forms.CharField(label=_("Username"), )
-    
+
     def __init__(self, *args, **kwargs):
         super(ChangePwdForm, self).__init__(None, *args, **kwargs)
-    
+
     def save(self, commit=True):
         if commit:
             u = self.cleaned_data['u']
             u.password = self.cleaned_data['new_password1']
             u.save()
         return u
-    
+
     def clean_new_password1(self):
         if not checkPasswdValidity(self.cleaned_data['new_password1']):
-            raise forms.ValidationError(_("No diacritics in password allowed"))            
+            raise forms.ValidationError(_("No diacritics in password allowed"))
         return self.cleaned_data['new_password1']
-        
+
     def clean_username(self):
         try:
             SysUser.objects.get(user_name=self.cleaned_data['username'])
         except SysUser.DoesNotExist:
             raise forms.ValidationError(_("No user with given username"))
         return self.cleaned_data['username']
-          
+
     def clean_old_password(self):
         try:
             u = SysUser.objects.get(user_name=self.cleaned_data['username'])
@@ -46,9 +46,9 @@ class ChangePwdForm(PasswordChangeForm):
             self.cleaned_data['u'] = u
         except KeyError:
             pass
-        
+
         return self.cleaned_data['old_password']
-      
+
 ChangePwdForm.base_fields.keyOrder = ['username', 'old_password', 'new_password1', 'new_password2']
 
 def change_passwd(request):
@@ -59,10 +59,10 @@ def change_passwd(request):
         form = ChangePwdForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('nss_admin_pass_changed'))          
+            return HttpResponseRedirect(reverse('nss_admin_pass_changed'))
     else:
         form = ChangePwdForm()
-        
+
     return render_to_response('nss_admin/passForm.html', {
         'form' : form
         }, RequestContext(request))

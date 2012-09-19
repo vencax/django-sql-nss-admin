@@ -11,13 +11,13 @@ class Command(BaseCommand):
     home directory to allow access to the date via H:\ share of home in linux.
     """
     defaultCopiedFldrs = 'Desktop,Documents,Favorites'
-    
+
     option_list = BaseCommand.option_list + (
-        make_option('--profiles', action='store_true', dest='all', 
+        make_option('--profiles', action='store_true', dest='all',
                     help=u'Input LDIF file'),
-        make_option('--newHomes', action='store_true', dest='by-time', 
+        make_option('--newHomes', action='store_true', dest='by-time',
                     help=u'DNs to skip'),
-        make_option('--copiedFolders', action='store_true', dest='by-time', 
+        make_option('--copiedFolders', action='store_true', dest='by-time',
                     default=[defaultCopiedFldrs], help=u'DNs to skip'),
         make_option('--mapping', action='store_true', default='',
                     help=u'Every folder needs user action'),
@@ -50,7 +50,7 @@ class Command(BaseCommand):
                     print str(e)
                 if options['interactive']:
                     raw_input("Press Enter to continue...")
-        
+
     def _moveContent(self, profile, newFolder, copiedFldrs, mapping):
         for d in copiedFldrs:
             newFolderDir = os.path.join(newFolder, mapping[unicode(d)])
@@ -65,8 +65,8 @@ class Command(BaseCommand):
                 if os.path.exists(newFile):
                     newFile = newFile + '.new'
                 shutil.move(oldFile, newFile)
-    
-        
+
+
 
 
 

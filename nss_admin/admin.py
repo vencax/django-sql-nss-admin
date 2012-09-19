@@ -4,6 +4,7 @@ from django.forms.models import modelform_factory
 
 from .models import SysGroup, SysUser, SysMembership, PGINA_HACKS
 from .forms import SysUserAdminForm
+from command_runner import runCommand
 
 class MembershipInline(admin.TabularInline):
     model = SysMembership
@@ -25,6 +26,19 @@ class SysUserAdmin(admin.ModelAdmin):
     chageform = SysUserAdminForm
     if PGINA_HACKS:
         exclude += ('user', 'hash_method')
+        
+    def save_model(self, request, obj, form, change):
+        super(SysUserAdmin, self).save_model(request, obj, form, change)
+        if hasattr(obj, '_deferredCMDs'):
+            request.DEFERREDCMDS = obj._deferredCMDs
+            del(obj._deferredCMDs)
+        
+    def add_view(self, request, form_url='', extra_context=None):
+        rval = super(SysUserAdmin, self).add_view(request, form_url, extra_context)
+        if hasattr(request, 'DEFERREDCMDS'):
+            for cmd in request.DEFERREDCMDS:
+                runCommand(cmd)
+        return rval
         
     def get_form(self, request, obj=None, **kwargs):
         """

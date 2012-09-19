@@ -1,7 +1,7 @@
 
 class SysAccountsRouter(object):
     """
-    A router to control all database operations on models 
+    A router to control all database operations on models
     in the nss_admin application
     """
     def db_for_read(self, model, **hints):

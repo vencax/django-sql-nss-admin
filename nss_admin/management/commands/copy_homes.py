@@ -6,12 +6,12 @@ import shutil
 class Command(BaseCommand):
     """
     In case we already have old homes and want to move its content
-    into new one run this. 
+    into new one run this.
     """
     option_list = BaseCommand.option_list + (
-        make_option('--oldHomes', action='store_true', dest='all', default='~/import.ldif', 
+        make_option('--oldHomes', action='store_true', dest='all', default='~/import.ldif',
                     help=u'Input LDIF file'),
-        make_option('--newHomes', action='store_true', dest='by-time', default=[], 
+        make_option('--newHomes', action='store_true', dest='by-time', default=[],
                     help=u'DNs to skip'),
     )
     help = u'Copy old homes to new ones'
@@ -30,14 +30,14 @@ class Command(BaseCommand):
                 except OSError, e:
                     print str(e)
                 raw_input("Press Enter to continue...")
-        
+
     def _moveContent(self, oldFolder, newFolder):
         for d in os.listdir(oldFolder):
             newFile = os.path.join(newFolder, d)
             oldFile = os.path.join(oldFolder, d)
             shutil.move(oldFile, newFile)
-    
-        
+
+
 
 
 
