@@ -1,0 +1,18 @@
+{% extends "site_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans 'batch user adding' %}{% endblock %}
+
+{% block content %}
+  <h2>{% trans 'batch user adding' %}</h2>
+  
+  <form enctype="multipart/form-data" action="" method="post">
+	{% csrf_token %}
+	<table>
+	{{ form.as_table }}
+	</table>
+	<p class="submit">
+		<input type="submit" value="{% trans "Submit" %}" />
+	</p>
+  </form>
+{% endblock %}

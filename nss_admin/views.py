@@ -2,12 +2,13 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.forms import PasswordChangeForm
 from django import forms
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from .models import SysUser, PGINA_HACKS
 from .utils import checkPasswd, checkPasswdValidity
+from django.contrib import messages
+import csv
+import codecs
 
 class ChangePwdForm(PasswordChangeForm):
     username = forms.CharField(label=_("Username"), )
@@ -51,6 +52,9 @@ class ChangePwdForm(PasswordChangeForm):
 
 ChangePwdForm.base_fields.keyOrder = ['username', 'old_password', 'new_password1', 'new_password2']
 
+class BatchForm(forms.Form):
+    batch = forms.FileField()
+
 def change_passwd(request):
     """
     Allows user to change its password.
@@ -59,10 +63,39 @@ def change_passwd(request):
         form = ChangePwdForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('nss_admin_pass_changed'))
+            messages.info(_('password changed'))
+            form = ChangePwdForm()
     else:
         form = ChangePwdForm()
 
     return render_to_response('nss_admin/passForm.html', {
         'form' : form
         }, RequestContext(request))
+    
+def load_batch(request):
+    """
+    Allows send batch with users to be added. 
+    """
+    if request.method == 'POST':
+        form = BatchForm(request.POST, request.FILES)
+        if form.is_valid():
+            _add_users_in_batch(form.files['batch'])
+            messages.info(_('Users'))
+            form = BatchForm()
+    else:
+        form = BatchForm()
+
+    return render_to_response('nss_admin/batchForm.html', {
+        'form' : form
+        }, RequestContext(request))
+
+def _add_users_in_batch(batch):
+    reader = csv.reader(batch, delimiter=';')    
+    for line in reader:
+        line = [unicode(codecs.decode(f, 'windows-1250')) for f in line]
+        firstname, lastname = line[0], line[1]
+        realname = '%s %s' % (firstname, lastname)
+        if not SysUser.objects.filter(realname=realname).exists():
+            u = SysUser(realname=realname)
+            u.save()
+        
