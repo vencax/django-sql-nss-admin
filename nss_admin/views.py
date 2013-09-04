@@ -14,7 +14,6 @@ from command_runner import runCommand
 from django.db.transaction import commit_on_success
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http.response import HttpResponse
 
 
 class ChangePwdForm(PasswordChangeForm):
@@ -71,7 +70,9 @@ def change_passwd(request):
         form = ChangePwdForm(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponse(_('password changed'))
+            return render_to_response('nss_admin/message.html', {
+                'message' : _('password changed')
+            }, RequestContext(request))
     else:
         form = ChangePwdForm()
 
@@ -92,7 +93,9 @@ def load_batch(request):
         if form.is_valid():
             added = _add_users_in_batch(form.files['batch'])
             m = '%i %s: %s' % (len(added), _('Users added'), ', '.join(added))
-            return HttpResponse(m)
+            return render_to_response('nss_admin/message.html', {
+                'message' : m
+            }, RequestContext(request))
     else:
         form = BatchForm()
 
