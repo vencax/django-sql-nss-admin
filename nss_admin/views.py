@@ -6,7 +6,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.forms import PasswordChangeForm
 from django import forms
-from django.contrib import messages
 from django.utils.translation import ugettext as _
 
 from .models import SysUser, PGINA_HACKS
@@ -15,6 +14,7 @@ from command_runner import runCommand
 from django.db.transaction import commit_on_success
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http.response import HttpResponse
 
 
 class ChangePwdForm(PasswordChangeForm):
@@ -71,8 +71,7 @@ def change_passwd(request):
         form = ChangePwdForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.info(request, _('password changed'))
-            form = ChangePwdForm()
+            return HttpResponse(_('password changed'))
     else:
         form = ChangePwdForm()
 
@@ -93,8 +92,7 @@ def load_batch(request):
         if form.is_valid():
             added = _add_users_in_batch(form.files['batch'])
             m = '%i %s: %s' % (len(added), _('Users added'), ', '.join(added))
-            messages.info(request, m)
-            form = BatchForm()
+            return HttpResponse(m)
     else:
         form = BatchForm()
 
