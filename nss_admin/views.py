@@ -1,14 +1,19 @@
+import csv
+import codecs
+import random
+import unicodedata
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.forms import PasswordChangeForm
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.contrib import messages
+from django.utils.translation import ugettext as _
 
 from .models import SysUser, PGINA_HACKS
 from .utils import checkPasswd, checkPasswdValidity
-from django.contrib import messages
-import csv
-import codecs
+from command_runner import runCommand
+from django.db.transaction import commit_on_success
+
 
 class ChangePwdForm(PasswordChangeForm):
     username = forms.CharField(label=_("Username"), )
@@ -63,7 +68,7 @@ def change_passwd(request):
         form = ChangePwdForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.info(_('password changed'))
+            messages.info(request, _('password changed'))
             form = ChangePwdForm()
     else:
         form = ChangePwdForm()
@@ -79,8 +84,9 @@ def load_batch(request):
     if request.method == 'POST':
         form = BatchForm(request.POST, request.FILES)
         if form.is_valid():
-            _add_users_in_batch(form.files['batch'])
-            messages.info(_('Users'))
+            added = _add_users_in_batch(form.files['batch'])
+            m = '%i %s: %s' % (len(added), _('Users added'), ', '.join(added))
+            messages.info(request, m)
             form = BatchForm()
     else:
         form = BatchForm()
@@ -88,14 +94,34 @@ def load_batch(request):
     return render_to_response('nss_admin/batchForm.html', {
         'form' : form
         }, RequestContext(request))
+    
+@commit_on_success
+def _add_user(firstname, lastname):
+    realname = '%s %s' % (firstname, lastname)        
+        
+    def strip_accents(s):
+        return ''.join(c for c in unicodedata.normalize('NFD', s)
+            if unicodedata.category(c) != 'Mn')
+    
+    if not SysUser.objects.filter(realname=realname).exists():
+        uname = strip_accents(firstname+lastname).lower()
+        if SysUser.objects.filter(user_name=uname).exists():
+            uname + str(random.randint(100))
+        u = SysUser(user_name=uname, realname=realname)
+        u.save()
+        return u
 
 def _add_users_in_batch(batch):
-    reader = csv.reader(batch, delimiter=';')    
+    reader = csv.reader(batch, delimiter=';')
+    added = []
     for line in reader:
         line = [unicode(codecs.decode(f, 'windows-1250')) for f in line]
         firstname, lastname = line[0], line[1]
-        realname = '%s %s' % (firstname, lastname)
-        if not SysUser.objects.filter(realname=realname).exists():
-            u = SysUser(realname=realname)
-            u.save()
+        newu = _add_user(firstname, lastname)
+        if newu:
+            if hasattr(newu, '_deferredCMDs'):
+                for cmd in newu._deferredCMDs:
+                    runCommand(cmd)
+            added.append(newu.user_name)
+    return added
         
