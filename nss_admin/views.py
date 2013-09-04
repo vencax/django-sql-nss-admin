@@ -13,6 +13,8 @@ from .models import SysUser, PGINA_HACKS
 from .utils import checkPasswd, checkPasswdValidity
 from command_runner import runCommand
 from django.db.transaction import commit_on_success
+from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required, user_passes_test
 
 
 class ChangePwdForm(PasswordChangeForm):
@@ -60,6 +62,7 @@ ChangePwdForm.base_fields.keyOrder = ['username', 'old_password', 'new_password1
 class BatchForm(forms.Form):
     batch = forms.FileField()
 
+@never_cache
 def change_passwd(request):
     """
     Allows user to change its password.
@@ -76,7 +79,11 @@ def change_passwd(request):
     return render_to_response('nss_admin/passForm.html', {
         'form' : form
         }, RequestContext(request))
-    
+
+
+@never_cache
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def load_batch(request):
     """
     Allows send batch with users to be added. 
