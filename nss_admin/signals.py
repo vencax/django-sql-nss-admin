@@ -54,9 +54,9 @@ def sysUserDeleted(sender, instance, **kwargs):
     """
     Delete samba user and tar home dir to /tmp.
     """
-    if ISSUE_SAMBA_COMMANDS:
-        runCommand('smbpasswd -x %s' % instance.user_name)
     if DELETE_HOME_ON_DELETION:
         homedir = '%s/%s' % (HOMES_PATH, instance.user_name)
         runCommand('tar -czf /tmp/%s.tgz %s && rm -rf %s' % \
                    (instance.user_name, homedir, homedir))
+    if ISSUE_SAMBA_COMMANDS:
+        runCommand('smbpasswd -x %s' % instance.user_name)
