@@ -3,6 +3,7 @@ from command_runner import runCommand
 
 from .utils import createPasswdHash
 
+
 ISSUE_SAMBA_COMMANDS = getattr(settings, 'ISSUE_SAMBA_COMMANDS', False)
 DELETE_HOME_ON_DELETION = getattr(settings, 'DELETE_HOME_ON_DELETION', False)
 HOMES_PATH = getattr(settings, 'HOMES_PATH', '/home')
@@ -10,6 +11,15 @@ PGINA_HACKS = getattr(settings, 'PGINA_HACKS', False)
 
 
 def userPostSaved(sender, instance, created, **kwargs):
+    instance._deferredCMDs = (
+        lambda: _userDeferredSync(instance, created, **kwargs),
+    )
+
+
+def _userDeferredSync(instance, created, **kwargs):
+    if instance.groups.count() == 0:
+        return
+
     _syncSysUser(instance, **kwargs)
     if created:
         _createHome(instance)
@@ -57,7 +67,7 @@ def _syncSysUser(user, **kwargs):
 
     sysUser.save()
 
-    user._deferredCMDs = (lambda: _syncGroups(user, sysUser), )
+    _syncGroups(user, sysUser)
 
     return sysUser
 
