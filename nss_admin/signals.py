@@ -101,7 +101,7 @@ def _syncGroups(otherGrs, sysUser):
     # create them all
     for g in otherGrs:
         sysgr = _getOrCreateSysGroup(g)
-        ms = SysMembership(user=sysUser.user_id, group=sysgr.group_id)
+        ms = SysMembership(user=sysUser, group=sysgr)
         ms.save()
 
 
