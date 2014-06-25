@@ -14,6 +14,7 @@ from command_runner import runCommand
 from django.db.transaction import commit_on_success
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 
 
 class ChangePwdForm(PasswordChangeForm):
@@ -25,7 +26,7 @@ class ChangePwdForm(PasswordChangeForm):
     def save(self, commit=True):
         if commit:
             u = self.cleaned_data['u']
-            u.password = self.cleaned_data['new_password1']
+            u.rawpwd = self.cleaned_data['new_password1']
             u.save()
         return u
 
@@ -36,23 +37,19 @@ class ChangePwdForm(PasswordChangeForm):
 
     def clean_username(self):
         try:
-            SysUser.objects.get(user_name=self.cleaned_data['username'])
-        except SysUser.DoesNotExist:
+            User.objects.get(username=self.cleaned_data['username'])
+        except User.DoesNotExist:
             raise forms.ValidationError(_("No user with given username"))
         return self.cleaned_data['username']
 
     def clean_old_password(self):
         try:
-            u = SysUser.objects.get(user_name=self.cleaned_data['username'])
-            if PGINA_HACKS:
-                pwdForCheck = u.unixpwd
-            else:
-                pwdForCheck = u.password
-            if not checkPasswd(self.cleaned_data['old_password'], pwdForCheck):
+            u = User.objects.get(username=self.cleaned_data['username'])            
+            if not u.check_password(self.cleaned_data['old_password']):
                 raise forms.ValidationError(_("Your old password was entered incorrectly. Please enter it again."))
             self.cleaned_data['u'] = u
         except KeyError:
-            pass
+            raise forms.ValidationError(_('old password is required'))
 
         return self.cleaned_data['old_password']
 
