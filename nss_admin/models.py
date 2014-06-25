@@ -19,7 +19,7 @@ class SysUser(models.Model):
     shell = models.CharField(max_length=20, default=DEFAULT_SHELL)
     password = models.CharField(max_length=40)
     status = models.CharField(max_length=1, default='A')
-    gid = models.ForeignKey('SysGroup', default=True)
+    gid = models.ForeignKey('SysGroup', default=1, null=True)
 
     if PGINA_HACKS:
         # this is because PGina has username column name hardcoded

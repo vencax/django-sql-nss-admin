@@ -1,5 +1,6 @@
 from django.conf import settings
 from command_runner import runCommand
+from django.db import transaction
 
 from .utils import createPasswdHash
 
@@ -11,27 +12,16 @@ PGINA_HACKS = getattr(settings, 'PGINA_HACKS', False)
 
 
 def userPostSaved(sender, instance, created, **kwargs):
-    instance._deferredCMDs = (
-        lambda: _userDeferredSync(instance, created, **kwargs),
-    )
-
-
-def _userDeferredSync(instance, created, **kwargs):
-    if instance.groups.count() == 0:
-        return
-
-    _syncSysUser(instance, **kwargs)
-    if created:
-        _createHome(instance)
-        if ISSUE_SAMBA_COMMANDS:
-            mkSmbUsr = '(echo %s; echo %s) | smbpasswd -s -a %s' %\
-                (instance.rawpwd, instance.rawpwd, instance.username)
-            instance._deferredCMDs += (lambda: runCommand(mkSmbUsr), )
+    # fist we solve change password situation
+    if not created and hasattr(instance, 'rawpwd') and ISSUE_SAMBA_COMMANDS:
+        runCommand('(echo %s; echo %s) | smbpasswd -s %s' %\
+            (instance.rawpwd, instance.rawpwd, instance.username))
+        _syncSysUser(instance, **kwargs)
+    # this is to happen whene user is manip. via admin interface
     else:
-        # change
-        if hasattr(instance, 'rawpwd') and ISSUE_SAMBA_COMMANDS:
-            runCommand('(echo %s; echo %s) | smbpasswd -s %s' %\
-                (instance.rawpwd, instance.rawpwd, instance.username))
+        instance._deferredCMDs = (
+            lambda: _userDeferredSync(instance, created, **kwargs),
+        )
 
 
 def userPostDeleted(sender, instance, **kwargs):
@@ -44,6 +34,17 @@ def runDefferedCmds(obj):
     if hasattr(obj, '_deferredCMDs'):
         for cmd in obj._deferredCMDs:
             cmd()
+
+
+def _userDeferredSync(instance, created, **kwargs):
+    su = _syncSysUser(instance, **kwargs)
+    _syncSysUserGroups(su, instance)
+    if created:
+        _createHome(instance)
+        if ISSUE_SAMBA_COMMANDS:
+            mkSmbUsr = '(echo %s; echo %s) | smbpasswd -s -a %s' %\
+                (instance.rawpwd, instance.rawpwd, instance.username)
+            runCommand(mkSmbUsr)
 
 
 def _syncSysUser(user, **kwargs):
@@ -66,35 +67,45 @@ def _syncSysUser(user, **kwargs):
     sysUser.status = 'A'
 
     sysUser.save()
-
-    _syncGroups(user, sysUser)
-
+    transaction.commit()
     return sysUser
 
 
-def _syncGroups(user, sysUser):
+def _syncSysUserGroups(sysUser, user):
+    GID, otherGrs = _extractPrimaryGroup(user)
+    if GID:
+        sysUser.gid = _getOrCreateSysGroup(GID)
+
+    _syncGroups(otherGrs, sysUser)
+    sysUser.save()
+
+
+def _extractPrimaryGroup(user):
+    GID, others = None, []
+    for g in user.groups.all():
+        if not GID:
+            GID = g
+        else:
+            others.append(g)
+    return GID, others
+
+
+def _syncGroups(otherGrs, sysUser):
     from .models import SysMembership
 
     # delete all memberships
-    userMships = SysMembership.objects.filter(user=sysUser)
+    userMships = SysMembership.objects.filter(user=sysUser.user_id)
     for g in userMships:
         g.delete()
 
     # create them all
-    GID = True
-    for g in user.groups.all():
-        sysgr = _getGroup(g)
-
-        if GID:
-            sysUser.gid = sysgr
-            sysUser.save()
-            GID = False
-        else:
-            ms = SysMembership(user=sysUser, group=sysgr)
-            ms.save()
+    for g in otherGrs:
+        sysgr = _getOrCreateSysGroup(g)
+        ms = SysMembership(user=sysUser.user_id, group=sysgr.group_id)
+        ms.save()
 
 
-def _getGroup(group):
+def _getOrCreateSysGroup(group):
     from .models import SysGroup
     try:
         g = SysGroup.objects.get(group_name=group.name)
@@ -124,7 +135,7 @@ def _createHome(user):
         runCommand('mv %s /tmp' % homedir)
     mkHome = 'cp -R /etc/skel %s && chown -R %s:adm %s && chmod 770 %s' %\
             (homedir, user.username, homedir, homedir)
-    user._deferredCMDs += (lambda: runCommand(mkHome), )
+    runCommand(mkHome)
 
 
 def _delSambaUserAndHome(sender, instance, **kwargs):
