@@ -29,7 +29,7 @@ class ChangePwdForm(PasswordChangeForm):
     def save(self, commit=True):
         if commit:
             u = self.cleaned_data['u']
-            u.rawpwd = self.cleaned_data['new_password1']
+            u.set_password(self.cleaned_data['new_password1'])
             u.save()
         return u
 
