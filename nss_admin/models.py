@@ -1,9 +1,10 @@
-from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import models
 from django.db.models.signals import post_delete, post_save
 
 from signals import userPostSaved, userPostDeleted
+
 
 DEFAULT_SHELL = getattr(settings, 'DEFAULT_SHELL', '/bin/bash')
 PGINA_HACKS = getattr(settings, 'PGINA_HACKS', False)
@@ -29,6 +30,9 @@ class SysUser(models.Model):
 
     class Meta:
         db_table = 'user'
+
+    def __unicode__(self):
+        return self.user_name
 # -----------------------------------------------------------------------------
 
 
@@ -43,6 +47,9 @@ class SysGroup(models.Model):
 
     class Meta:
         db_table = 'groups'
+
+    def __unicode__(self):
+        return self.group_name
 # -----------------------------------------------------------------------------
 
 
