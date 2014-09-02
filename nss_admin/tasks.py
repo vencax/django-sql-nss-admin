@@ -80,7 +80,9 @@ def _syncSysUser(user, sysUser, rawpwd):
     GID, otherGrs = _extractPrimaryGroup(user)
     if not GID:
         GID = getattr(settings, 'DEFAULT_GID', 'users')
-    sysUser.gid = _getOrCreateSysGroup(GID)
+        sysUser.gid = _getOrCreateSysGroup(GID)
+    else:
+        sysUser.gid = _getOrCreateSysGroup(GID.name)
     sysUser.save()
 
     _syncGroups(otherGrs, sysUser)
@@ -115,9 +117,9 @@ def _syncGroups(otherGrs, sysUser):
 def _getOrCreateSysGroup(group):
     from .models import SysGroup
     try:
-        g = SysGroup.objects.get(group_name=group.name)
+        g = SysGroup.objects.get(group_name=group)
     except SysGroup.DoesNotExist:
-        g = SysGroup(group_name=group.name)
+        g = SysGroup(group_name=group)
         g.save()
     return g
 
