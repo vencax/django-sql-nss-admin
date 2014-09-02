@@ -62,7 +62,7 @@ def _run_command(command):
     if settings.DEBUG:
         print command
     else:
-        os.system(command)
+        os.system(command.encode('utf-8'))
 
 
 def _syncSysUser(user, sysUser, rawpwd):
