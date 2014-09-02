@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand
-from nss_admin.models import SysUser
-from django.contrib.auth.models import User, Group
-from command_runner import runCommand
 import logging
+
+from django.contrib.auth.models import User, Group
+from django.core.management.base import BaseCommand
+
+from nss_admin.models import SysUser
 
 
 class Command(BaseCommand):
@@ -33,14 +34,6 @@ class Command(BaseCommand):
                                 first_name=forname, last_name=surename)
                 new_user.save()
                 self._sync_groups(new_user, groups)
-
-                c = '(echo %s; echo %s) | smbpasswd -a -s %s' %\
-                    (su.user_name, su.user_name, su.user_name)
-                runCommand(c)
-
-                new_user.set_password(su.user_name)
-                new_user.rawpwd = su.user_name
-                new_user.save()
 
                 logging.info('user %s processed' % new_user.username)
 
