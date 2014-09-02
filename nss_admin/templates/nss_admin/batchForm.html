@@ -6,6 +6,8 @@
 {% block content %}
   <h2>{% trans 'batch user adding' %}</h2>
   
+  <p>{% trans 'csv utf-8 encoded files only without no header line' %}</p>
+  
   {% if messages %}
   <ul class="messages">
 	  {% for message in messages %}

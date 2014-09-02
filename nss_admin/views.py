@@ -1,19 +1,17 @@
-import csv
 import codecs
-import random
 import unicodedata
+
+from django import forms
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import User, Group
+from django.db.transaction import commit_on_success
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.contrib.auth.forms import PasswordChangeForm
-from django import forms
 from django.utils.translation import ugettext as _
-from command_runner import runCommand
-from django.db.transaction import commit_on_success
 from django.views.decorators.cache import never_cache
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import User
+import unicodecsv
 
-from .models import SysUser
 from .utils import checkPasswdValidity
 
 
@@ -61,10 +59,6 @@ ChangePwdForm.base_fields.keyOrder = [
 ]
 
 
-class BatchForm(forms.Form):
-    batch = forms.FileField()
-
-
 @never_cache
 def change_passwd(request):
     """
@@ -85,6 +79,11 @@ def change_passwd(request):
         }, RequestContext(request))
 
 
+class BatchForm(forms.Form):
+    batch = forms.FileField()
+    groups = forms.ModelMultipleChoiceField(Group.objects.all())
+
+
 @never_cache
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -94,11 +93,20 @@ def load_batch(request):
     """
     if request.method == 'POST':
         form = BatchForm(request.POST, request.FILES)
+
         if form.is_valid():
-            added = _add_users_in_batch(form.files['batch'])
-            m = '%i %s: %s' % (len(added), _('Users added'), ', '.join(added))
+            added, skipped, m = [], [], None
+
+            try:
+                added, skipped = _process_batch(form.files['batch'],
+                                                form.cleaned_data['groups'])
+            except Exception, e:
+                m = '%s, error: %s' % (_('Bad batch file'), str(e))
+
             return render_to_response('nss_admin/message.html', {
-                'message': m
+                'message': m,
+                'added': added,
+                'skipped': skipped
             }, RequestContext(request))
     else:
         form = BatchForm()
@@ -108,33 +116,47 @@ def load_batch(request):
         }, RequestContext(request))
 
 
+def _strip_accents(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', s)
+        if unicodedata.category(c) != 'Mn')
+
+
 @commit_on_success
-def _add_user(firstname, lastname):
-    realname = '%s %s' % (firstname, lastname)
+def _add_user(line, groups):
+    firstname, lastname = line[0], line[1]
+    if len(line) > 2:
+        mail = line[2]
+        uname = mail.split('@')[0]
+    else:
+        uname = _strip_accents(firstname + lastname).lower()
+        mail = '%s@skola.local' % uname
+    if len(line) > 3:
+        passwd = line[3]
+    else:
+        passwd = uname
 
-    def strip_accents(s):
-        return ''.join(c for c in unicodedata.normalize('NFD', s)
-            if unicodedata.category(c) != 'Mn')
-
-    if not SysUser.objects.filter(realname=realname).exists():
-        uname = strip_accents(firstname + lastname).lower()
-        if SysUser.objects.filter(user_name=uname).exists():
-            uname + str(random.randint(100))
-        u = SysUser(user_name=uname, realname=realname)
+    if not User.objects.filter(username=uname).exists():
+        u = User(username=uname,
+                 first_name=firstname, last_name=lastname,
+                 email=mail)
+        u.rawpwd = passwd
+        u.set_password(passwd)
         u.save()
-        return u
+
+        for g in groups:
+            u.groups.add(g)
+        u.save()
+        return True
+    else:
+        return False
 
 
-def _add_users_in_batch(batch):
-    reader = csv.reader(batch, delimiter=';')
-    added = []
+def _process_batch(batch, groups):
+    reader = unicodecsv.reader(batch, encoding='utf-8')
+    added, skipped = [], []
     for line in reader:
-        line = [unicode(codecs.decode(f, 'windows-1250')) for f in line]
-        firstname, lastname = line[0], line[1]
-        newu = _add_user(firstname, lastname)
-        if newu:
-            if hasattr(newu, '_deferredCMDs'):
-                for cmd in newu._deferredCMDs:
-                    runCommand(cmd)
-            added.append(newu.user_name)
-    return added
+        if _add_user(line, groups):
+            added.append(line)
+        else:
+            skipped.append(line)
+    return added, skipped
