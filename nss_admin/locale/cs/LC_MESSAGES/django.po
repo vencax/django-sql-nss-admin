@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-31 21:00+0200\n"
+"POT-Creation-Date: 2014-09-02 12:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,95 +17,75 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: forms.py:14 models.py:30
-msgid "Password"
-msgstr "Heslo"
+#: views.py:18
+msgid "Your old password was entered incorrectly. Enter it again."
+msgstr "Vaše staré heslo bylo zadáno špatně. Prosím zadejte správné."
 
-#: forms.py:15
-msgid "Input new password if desired"
-msgstr "Vložte nové heslo nebo nechte prázdé pro ponechání stávajícího."
-
-#: forms.py:30 views.py:30
-msgid "No diacritics in password allowed"
-msgstr "Diakritika v hesle je zakázána"
-
-#: models.py:17 models.py:57
-msgid "Active"
-msgstr "Aktivní"
-
-#: models.py:18
-msgid "Disabled"
-msgstr "Zakázán"
-
-#: models.py:26 views.py:13
+#: views.py:22
 msgid "Username"
 msgstr "Uživatelské jméno"
 
-#: models.py:27
-msgid "realname"
-msgstr "Jméno"
-
-#: models.py:28
-msgid "Login Shell"
-msgstr "Příkazový řádek"
-
-#: models.py:31
-msgid "Password for shell logins"
-msgstr "Heslo pro přihlašování k počítačům."
-
-#: models.py:32 models.py:66
-msgid "status"
-msgstr "Status"
-
-#: models.py:34
-msgid "primary group"
-msgstr "primární skupina"
-
-#: models.py:45 models.py:49
-msgid "system user"
-msgstr "Systémový uživatel"
-
-#: models.py:46
-msgid "system users"
-msgstr "Systémoví uživatelé"
-
-#: models.py:72 models.py:76
-msgid "system group"
-msgstr "Systémová skupina"
-
-#: models.py:73
-msgid "system groups"
-msgstr "Systémové skupiny"
-
-#: models.py:85
-msgid "system group membership"
-msgstr "členství ve skupině"
-
-#: models.py:86
-msgid "system group memberships"
-msgstr "členství ve skupině"
-
 #: views.py:36
+msgid "No diacritics in password allowed"
+msgstr "Diakritika v hesle je zakázána"
+
+#: views.py:43
 msgid "No user with given username"
 msgstr "Uživatel nenalezen, spatně vyplněné uživatelské jméno"
 
-#: views.py:47
-msgid "Your old password was entered incorrectly. Please enter it again."
-msgstr "Vaše staré heslo bylo zadáno špatně. Prosím zadejte správné."
+#: views.py:53
+#, fuzzy
+msgid "old password is required"
+msgstr "staré heslo je požadováno"
 
-#: templates/nss_admin/passChanged.html:4
-#: templates/nss_admin/passChanged.html:7
+#: views.py:72
 msgid "password changed"
 msgstr "Heslo změněno"
 
-#: templates/nss_admin/passChanged.html:8
-msgid "congratulations"
-msgstr "Gratulujeme"
+#: views.py:83
+msgid "batch file"
+msgstr "dávkový soubor"
+
+#: views.py:85
+msgid "groups"
+msgstr "skupiny"
+
+#: views.py:105
+msgid "Bad batch file"
+msgstr "Špatný dávkový soubor"
+
+#: templates/nss_admin/batchForm.html:4 templates/nss_admin/batchForm.html:7
+msgid "batch user adding"
+msgstr "Dávkové přidání uživatelů"
+
+#: templates/nss_admin/batchForm.html:9
+msgid "csv utf-8 encoded files only without no header line"
+msgstr ""
+"CSV soubor (oddělovače jsou čárky), s kodováním utf-8. Bez hlaviček v 1."
+"řádce."
+
+#: templates/nss_admin/batchForm.html:25 templates/nss_admin/passForm.html:23
+msgid "Submit"
+msgstr "Odeslat"
+
+#: templates/nss_admin/message.html:5
+msgid "result"
+msgstr "Výsledky"
+
+#: templates/nss_admin/message.html:9
+msgid "Users added"
+msgstr "Přidaní uživatelé"
+
+#: templates/nss_admin/message.html:20
+msgid "Users skipped"
+msgstr "Vynechaní uživatelé, už existují?"
+
+#: templates/nss_admin/message.html:21
+msgid "Ctrl+C into file to create CSV with only skipped users"
+msgstr ""
+"Kopírovat do souboru a získat tak CSV soubor pro další editaci s jen "
+"vynechanými."
 
 #: templates/nss_admin/passForm.html:4 templates/nss_admin/passForm.html:7
 msgid "password change form"
 msgstr "Formulář pro změnu hesla"
-
-#: templates/nss_admin/passForm.html:15
-msgid "Submit"
-msgstr "Odeslat"

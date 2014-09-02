@@ -1,4 +1,3 @@
-import codecs
 import unicodedata
 
 from django import forms
@@ -80,8 +79,9 @@ def change_passwd(request):
 
 
 class BatchForm(forms.Form):
-    batch = forms.FileField()
-    groups = forms.ModelMultipleChoiceField(Group.objects.all())
+    batch = forms.FileField(label=_('batch file'))
+    groups = forms.ModelMultipleChoiceField(Group.objects.all(),
+                                            label=_('groups'))
 
 
 @never_cache
