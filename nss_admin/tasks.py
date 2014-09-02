@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 import os
-from time import time
+import time
 
 from celery import shared_task
 from django.conf import settings
@@ -78,8 +78,9 @@ def _syncSysUser(user, sysUser, rawpwd):
     if not GID:
         GID = getattr(settings, 'DEFAULT_GID', 'users')
     sysUser.gid = _getOrCreateSysGroup(GID)
-    _syncGroups(otherGrs, sysUser)
+    sysUser.save()
 
+    _syncGroups(otherGrs, sysUser)
     sysUser.save()
 
 
