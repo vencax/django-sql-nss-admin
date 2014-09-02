@@ -19,6 +19,7 @@ PGINA_HACKS = getattr(settings, 'PGINA_HACKS', False)
 
 _chsambapass = '(echo %s; echo %s) | smbpasswd -s %s'
 _makesambauser = '(echo %s; echo %s) | smbpasswd -s -a %s'
+_modify_fullname = 'pdbedit --modify -u %s --fullname "%s"'
 
 
 @shared_task
@@ -34,13 +35,18 @@ def sync_user(uname, rawpwd):
         sysUser = SysUser(user=uname)
         created = True
 
-    _syncSysUser(user, sysUser, rawpwd)
+    su = _syncSysUser(user, sysUser, rawpwd)
 
     if created:
         time.sleep(2)   # wait all is done id DB
         _createHome(uname)
         if ISSUE_SAMBA_COMMANDS:
             _run_command(_makesambauser % (rawpwd, rawpwd, uname))
+    else:
+        if ISSUE_SAMBA_COMMANDS:
+            # change realname of da samba user
+            # see: http://www.samba.org/samba/docs/man/manpages/pdbedit.8.html
+            _run_command(_modify_fullname % (uname, su.realname))
 
     logging.info('user %s synced' % uname)
 
@@ -87,6 +93,7 @@ def _syncSysUser(user, sysUser, rawpwd):
 
     _syncGroups(otherGrs, sysUser)
     sysUser.save()
+    return sysUser
 
 
 def _extractPrimaryGroup(user):
