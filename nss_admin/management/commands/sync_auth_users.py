@@ -25,11 +25,10 @@ class Command(BaseCommand):
                 self._add_gid(su, groups)
 
                 parts = su.realname.split(' ')
-                surename = parts[0]
                 if len(parts) > 1:
-                    forname = parts[1]
+                    forname, surename = parts[0], parts[1]
                 else:
-                    forname = ''
+                    forname, surename = '', parts[0]
                 new_user = User(username=su.user_name,
                                 first_name=forname, last_name=surename)
                 new_user.save()
