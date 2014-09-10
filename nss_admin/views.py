@@ -148,6 +148,14 @@ def _add_user(line, groups):
         u.save()
         return True
     else:
+        u = User.objects.get(username=uname)
+        save = False
+        for g in groups:
+            if g not in u.groups.all():
+                u.groups.add(g)
+                save = True
+        if save:
+            u.save()
         return False
 
 
